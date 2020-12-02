@@ -1,5 +1,5 @@
 from collections import namedtuple
-from typing import List
+from typing import List, NamedTuple
 
 
 '''
@@ -34,7 +34,7 @@ with open('input.txt') as f:
 Validator = namedtuple('Validator', ['min_num', 'max_num', 'let'])
 
 class Password_Validator:
-    def __init__(self, policy: List[str]):
+    def __init__(self, policy: str):
         policy = policy.split(" ")
         self.policy = Validator(int(policy[0].split("-")[0]),
                                 int(policy[0].split("-")[1]),
