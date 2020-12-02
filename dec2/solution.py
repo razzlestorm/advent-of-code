@@ -47,13 +47,29 @@ class Password_Validator:
             return True
         return False
 
+    def validate_pos(self):
+        if self.password[self.policy.min_num - 1] == self.policy.let or \
+           self.password[self.policy.max_num - 1] == self.policy.let:
+            if self.password[self.policy.min_num - 1] != self.password[self.policy.max_num - 1]:
+                return True
+        return False
+
 
 def check_passwords(input: List[str]) -> int:
-    count = 0
+    first_count = 0
+    pos_count = 0
     for group in input:
         x = Password_Validator(group)
         if x.validate():
-            count += 1
-    return count
+            first_count += 1
+        if x.validate_pos():
+            pos_count += 1
+    return (first_count, pos_count)
+
+test_input = [
+'1-3 a: abcde',
+'1-3 b: cdefg',
+'2-9 c: ccccccccc'
+]
 
 print(check_passwords(input_list))
