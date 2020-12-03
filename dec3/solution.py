@@ -5,9 +5,9 @@ with open('input.txt') as f:
     input_list = [line.strip() for line in f]
 
 # example line in input_list: '....#...............#.#..###.##'
-# Each column is 31 spaces in height, the entire list is 323 long.
-# print(len(input_list[0]))
-# print(len(input_list))
+# Each row is 31 spaces in width, the columns are 323 high.
+# print(len(input_list[0])) <- width
+# print(len(input_list)) <- height
 
 SLOPE = (3, 1)
 
@@ -18,7 +18,7 @@ def traverse_map(input_list: List, slope: Tuple) -> int:
 
     while y < height:
         try:
-            # % by width because we're repeating!
+            # % by width because we're repeating, not just reaching a side and staying
             if input_list[y][x % width] == '#':
                 count += 1
             x += slope[0]
