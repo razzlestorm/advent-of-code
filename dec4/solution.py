@@ -1,42 +1,19 @@
 from typing import Dict, List
 import re
 
-with open('input.txt') as f:
-    input_list = f.read().split('\n\n')
-    entries = [entry.replace("\n", " ").split(" ") for entry in input_list]
-    del entries[-1][-1]
-#res = dict(map(lambda l:l.split(":"), x))
-# example of 2/4 valid passports in batch file (can be missing cid):
-'''
-ecl:gry pid:860033327 eyr:2020 hcl:#fffffd
-byr:1937 iyr:2017 cid:147 hgt:183cm
 
-iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884
-hcl:#cfa07d byr:1929
+FIELDS = {'byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid', 'cid'}
+REQUIRED_FIELDS = FIELDS - {'cid'}
 
-hcl:#ae17e1 iyr:2013
-eyr:2024
-ecl:brn pid:760753108 byr:1931
-hgt:179cm
-
-hcl:#cfa07d eyr:2025 pid:166559648
-iyr:2011 ecl:brn hgt:59in
-'''
 # Pre-parsed entry looks like:
 # 'pid:782547454 hcl:z ecl:#b0805f iyr:2013 eyr:2023 hgt:159cm byr:1935 cid:230'
 def create_dictlist(input: List[str]) -> List[dict]:
     entry_dict = [dict(map(lambda e:e.split(":"), entry)) for entry in input]
     return entry_dict
 
+# Previously compared sets with ==, but that seems more brittle.
 def validate_fields(passport: Dict) -> bool:
-    standard = ['byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid', 'cid']
-    return set(passport.keys()) == set(standard[:-1]) or set(passport.keys()) == set(standard)
-
-
-def validate_height(height):
-    if height[-2:] == 'in':
-        return  True if 59 <= int(height[:-2]) <= 76 else False
-    return True if 150 <= int(height[:-2]) <= 193 else False
+    return all(field in passport for field in REQUIRED_FIELDS)
 
 def validate_values(passport: Dict) -> bool:
     try:
@@ -46,7 +23,7 @@ def validate_values(passport: Dict) -> bool:
         return False
     hair = re.compile(r"^#[\da-f]{6}$", re.I)
     pid = re.compile(r"^\d{9}$")
-    eye_colors = ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']
+    eye_colors = {'amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth'}
     conditions = [(1920 <= int(passport['byr']) <= 2002),
                   (2010 <= int(passport['iyr']) <= 2020),
                   (2020 <= int(passport['eyr']) <= 2030),
@@ -56,8 +33,16 @@ def validate_values(passport: Dict) -> bool:
                   (pid.match(passport['pid']))]
     return all(conditions)
 
+def validate_height(height):
+    if height.endswith('in'):
+        return 59 <= int(height[:-2]) <= 76
+    return 150 <= int(height[:-2]) <= 193
 
 
+with open('input.txt') as f:
+    input_list = f.read().split('\n\n')
+    entries = [entry.replace("\n", " ").split(" ") for entry in input_list]
+    del entries[-1][-1]
 
 passports = create_dictlist(entries)
 valid_passports = [p for p in passports if validate_fields(p)]
@@ -65,6 +50,6 @@ valid_passports = [p for p in passports if validate_fields(p)]
 print('passports: ', len(passports))
 print('valid passports: ', len(valid_passports))
 
-# solutions
+# Solutions
 print(sum([validate_fields(entry) for entry in passports]))
 print(sum([validate_values(entry) for entry in valid_passports]))
