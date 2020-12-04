@@ -1,9 +1,9 @@
 from typing import Dict, List
 import re
 
-with open('passdict.txt') as f:
+with open('input.txt') as f:
     input_list = f.read().split('\n\n')
-    entries = [entry.replace("\n", " ").split(" ") for entry in passdict_list]
+    entries = [entry.replace("\n", " ").split(" ") for entry in input_list]
     del entries[-1][-1]
 #res = dict(map(lambda l:l.split(":"), x))
 # example of 2/4 valid passports in batch file (can be missing cid):
@@ -40,7 +40,8 @@ def validate_values(passdict: Dict) -> bool:
     except TypeError:
         return False
 
-    hair = re.compile("^#[\w\d]{6}$", re.I)
+    hair = re.compile(r"^#[0-9a-f]{6}$", re.I)
+    pid = re.compile(r"^[0-9]{9}$")
     eye_colors = ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']
     conditions = [(1920 <= int(passdict['byr']) <= 2002),
                   (2010 <= int(passdict['iyr']) <= 2020),
@@ -48,7 +49,7 @@ def validate_values(passdict: Dict) -> bool:
                   ((150 <= int(hgt) <= 193) or (59 <= int(hgt) <= 76)),
                   (hair.match(passdict['hcl'])),
                   (passdict['ecl'] in eye_colors),
-                  (len(passdict['pid']) == 9),]
+                  (pid.match(passdict['pid']))]
     return all(conditions)
 
 passports = create_dictlist(entries)
