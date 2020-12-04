@@ -44,8 +44,8 @@ def validate_values(passport: Dict) -> bool:
         hgt = height.match(passport['hgt'])[0]
     except TypeError:
         return False
-    hair = re.compile(r"^#[0-9a-f]{6}$", re.I)
-    pid = re.compile(r"^[0-9]{9}$")
+    hair = re.compile(r"^#[\da-f]{6}$", re.I)
+    pid = re.compile(r"^\d{9}$")
     eye_colors = ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']
     conditions = [(1920 <= int(passport['byr']) <= 2002),
                   (2010 <= int(passport['iyr']) <= 2020),
