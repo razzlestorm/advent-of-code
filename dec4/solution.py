@@ -28,9 +28,9 @@ def create_dictlist(input: List[str]) -> List[dict]:
     entry_dict = [dict(map(lambda e:e.split(":"), entry)) for entry in input]
     return entry_dict
 
-def validate_fields(passdict: Dict) -> bool:
+def validate_fields(passport: Dict) -> bool:
     standard = ['byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid', 'cid']
-    return set(passdict.keys()) == set(standard[:-1]) or set(passdict.keys()) == set(standard)
+    return set(passport.keys()) == set(standard[:-1]) or set(passport.keys()) == set(standard)
 
 
 def validate_height(height):
@@ -38,22 +38,22 @@ def validate_height(height):
         return  True if 59 <= int(height[:-2]) <= 76 else False
     return True if 150 <= int(height[:-2]) <= 193 else False
 
-def validate_values(passdict: Dict) -> bool:
+def validate_values(passport: Dict) -> bool:
     try:
         height = re.compile("^\d{2,3}cm|\d{2,3}in$", re.I)
-        hgt = height.match(passdict['hgt'])[0]
+        hgt = height.match(passport['hgt'])[0]
     except TypeError:
         return False
     hair = re.compile(r"^#[0-9a-f]{6}$", re.I)
     pid = re.compile(r"^[0-9]{9}$")
     eye_colors = ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']
-    conditions = [(1920 <= int(passdict['byr']) <= 2002),
-                  (2010 <= int(passdict['iyr']) <= 2020),
-                  (2020 <= int(passdict['eyr']) <= 2030),
+    conditions = [(1920 <= int(passport['byr']) <= 2002),
+                  (2010 <= int(passport['iyr']) <= 2020),
+                  (2020 <= int(passport['eyr']) <= 2030),
                   (validate_height(hgt)),
-                  (hair.match(passdict['hcl'])),
-                  (passdict['ecl'] in eye_colors),
-                  (pid.match(passdict['pid']))]
+                  (hair.match(passport['hcl'])),
+                  (passport['ecl'] in eye_colors),
+                  (pid.match(passport['pid']))]
     return all(conditions)
 
 
