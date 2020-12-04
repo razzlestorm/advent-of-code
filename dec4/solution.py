@@ -1,9 +1,9 @@
 from typing import Dict, List
 import re
 
-with open('input.txt') as f:
+with open('passdict.txt') as f:
     input_list = f.read().split('\n\n')
-    entries = [entry.replace("\n", " ").split(" ") for entry in input_list]
+    entries = [entry.replace("\n", " ").split(" ") for entry in passdict_list]
     del entries[-1][-1]
 #res = dict(map(lambda l:l.split(":"), x))
 # example of 2/4 valid passports in batch file (can be missing cid):
@@ -28,28 +28,27 @@ def create_dictlist(input: List[str]) -> List[dict]:
     entry_dict = [dict(map(lambda e:e.split(":"), entry)) for entry in input]
     return entry_dict
 
-def validate_fields(input: Dict) -> bool:
+def validate_fields(passdict: Dict) -> bool:
     standard = ['byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid', 'cid']
-    return set(input.keys()) == set(standard[:-1]) or set(input.keys()) == set(standard)
+    return set(passdict.keys()) == set(standard[:-1]) or set(passdict.keys()) == set(standard)
 
 
-def validate_values(input: Dict) -> bool:
-
+def validate_values(passdict: Dict) -> bool:
     try:
         height = re.compile("^\d{2,3}cm|\d{2,3}in$", re.I)
-        hgt = height.match(input['hgt'])[0][:-2]
+        hgt = height.match(passdict['hgt'])[0][:-2]
     except TypeError:
         return False
 
     hair = re.compile("^#[\w\d]{6}$", re.I)
     eye_colors = ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']
-    conditions = [(1920 <= int(input['byr']) <= 2002),
-                  (2010 <= int(input['iyr']) <= 2020),
-                  (2020 <= int(input['eyr']) <= 2030),
+    conditions = [(1920 <= int(passdict['byr']) <= 2002),
+                  (2010 <= int(passdict['iyr']) <= 2020),
+                  (2020 <= int(passdict['eyr']) <= 2030),
                   ((150 <= int(hgt) <= 193) or (59 <= int(hgt) <= 76)),
-                  (hair.match(input['hcl'])),
-                  (input['ecl'] in eye_colors),
-                  (len(input['pid']) == 9),]
+                  (hair.match(passdict['hcl'])),
+                  (passdict['ecl'] in eye_colors),
+                  (len(passdict['pid']) == 9),]
     return all(conditions)
 
 passports = create_dictlist(entries)
