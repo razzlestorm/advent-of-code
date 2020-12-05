@@ -44,6 +44,10 @@ with open('input.txt') as f:
     input_list = f.read().split('\n')
     tickets = [line for line in input_list]
 
-sol1 = max([Ticket(ticket).id for ticket in tickets])
+ticket_ids = [Ticket(ticket).id for ticket in tickets]
+print(min(ticket_ids))
+print(max(ticket_ids))
 
-print(sol1)
+for ii in range(min(ticket_ids), max(ticket_ids)+1):
+    if ii not in ticket_ids:
+        print(ii)
