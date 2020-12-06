@@ -1,7 +1,7 @@
 from typing import NamedTuple, List
 
 class Group(NamedTuple):
-    answers: List
+    answers: List[str]
 
     def stringify(self) -> str:
         return ''.join(self.answers)
