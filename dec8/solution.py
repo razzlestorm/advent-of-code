@@ -1,4 +1,4 @@
-from typing import NamedTuple
+from typing import NamedTuple, Tuple
 
 
 class Command(NamedTuple):
@@ -11,7 +11,7 @@ class CPU:
         self.pc = 0
         self.accumulator = 0
         self.ram = [None] * filelength
-        self.rebooted = False
+        self.solved = False
 
         # Table to call functions with
         self.branchtable = {
@@ -20,7 +20,7 @@ class CPU:
             'acc': self.acc
         }
 
-    def load(self, file):
+    def load(self, file: str) -> Tuple:
         # keeping track of the address of the command
         for address, command in enumerate(file):
             self.ram[address] = (address, self.parse_command(command))
@@ -43,42 +43,50 @@ class CPU:
     def run(self):
         """Run the CPU."""
         # we make this a list (or queue) so we can pop the previous command
-        stack = []
-        while self.running:
-            IR = self.ram[self.pc]
-            if IR not in stack:
-                stack.append(IR)
-                self.branchtable[IR[1].command](IR[1].num)
-            elif IR[0] == len(self.ram)-1:
-                print("We've finished! Final accumulator is: ")
-                print(self.accumulator)
-                self.running = False
-
-            elif self.rebooted is False:
-                print(self.accumulator)
-                # We get the previous command:
-                IR = stack.pop()
-                # overwrite command at ram address:
-                if IR[1].command == 'nop':
-                    self.ram[IR[0]] = (IR[0], Command('jmp', IR[1].num))
-                elif IR[1].command == 'jmp':
-                    self.ram[IR[0]] = (IR[0], Command('nop', IR[1].num))
-                # reset and go again (should only happen once)
-                self.pc = 0
-                self.accumulator = 0
-                stack = []
-                self.rebooted = True
-
-            else:
-                breakpoint()
-                print('bug')
+        try:
+	        stack = []
+	        while self.running:
+	            IR = self.ram[self.pc]
+	            if IR[0] == len(self.ram)-1:
+	                self.solved = True
+	                print("We've finished! Final accumulator is: ")
+	                print(self.accumulator)
+	                self.running = False
+	            elif IR not in stack:
+	                stack.append(IR)
+	                self.branchtable[IR[1].command](IR[1].num)
+	            else:
+	                print(self.accumulator)
+	                self.running = False
+        except IndexError:
+            breakpoint()
 
 
-
+def iter_commands(commands):
+    cpu = CPU(len(commands))
+    cpu.load(commands)
+    for i, (command, num) in cpu.ram:
+        temp = cpu.ram[:]
+        if command == 'nop':
+            temp[i] = (i, Command('jmp', num))
+        elif command == 'jmp':
+            temp[i] = (i, Command('nop', num))
+        else:
+            continue
+        cpu2 = CPU(len(temp))
+        cpu2.ram = temp
+        cpu2.run()
+        if cpu2.solved:
+            print('Solved: ', cpu2.accumulator)
+            break
 
 with open('input.txt') as f:
     command_list = [line for line in f.read().split('\n')]
 
+# sol 1
 cpu = CPU(len(command_list))
 cpu.load(command_list)
 cpu.run()
+
+# sol 2
+iter_commands(command_list)
