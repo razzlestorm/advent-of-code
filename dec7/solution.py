@@ -39,7 +39,7 @@ def check_map(bags: List[Bag], name: str) -> List[str]:
     return list(checked)
 
 # All credit to Joel Grus
-# TODO: Refactor/come up with own solution.
+# TODO: Refactor everything/come up with own solution.
 def num_bags_inside(
     bags: List[Bag],
     color: str
