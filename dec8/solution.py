@@ -43,6 +43,7 @@ class CPU:
     def run(self):
         """Run the CPU."""
         # we make this a list (or queue) so we can pop the previous command
+        # Turns out we didn't need the previous command, but it hardly affects runtime as a list instead of a set
         try:
 	        stack = []
 	        while self.running:
