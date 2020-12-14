@@ -11,10 +11,10 @@ class Address(NamedTuple):
         return sum(int(x, 2) for x in self.stored)
 
 def apply_mask2(mask: str, instruction: str, *args) -> List:
-    #breakpoint()
+    # Checking for X, so we know how many strings we will need
     if 'X' in mask:
         output = Address(args[0], [''] * (2**mask.count('X')))
-        cutoff = len(output.stored)/2
+        cutoff = len(output.stored)//2
     else:
         output = Address(args, [''])
     for ii, let in enumerate(mask):
@@ -22,6 +22,8 @@ def apply_mask2(mask: str, instruction: str, *args) -> List:
             jj = 0
             kk = 0
             flip = False
+            # inserts either '0' or '1' into each string, flipping with F frequency
+            # where F = cutoff, then halving cutoff so we should have 2**X unique strings?
             while jj < len(output.stored):
                 while kk < cutoff:
                     output.stored[jj] += str(int(flip))
@@ -29,10 +31,11 @@ def apply_mask2(mask: str, instruction: str, *args) -> List:
                     jj += 1
                 kk = 0
                 flip = not flip
-            cutoff /= 2
+            cutoff //= 2
         else:
+            # otherwise appending the value of the original instruction
             for x in range(len(output.stored)):
-                output.stored[x] += mask[ii]
+                output.stored[x] += instruction[ii]
     return output
 
 def apply_mask(mask: str, instruction: str, *args) -> str:
@@ -65,7 +68,7 @@ with open('input.txt') as f:
 mem = generate_dict(instructions, apply_mask)
 print('sol1: ', sum_values(mem))
 
-#sol2: answer should be: 4574598714592
+#sol2: answer should be: 4_574_598_714_592, currently returning:  488_600_067_258_664
 mem2 = generate_dict(instructions, apply_mask2)
 print('sol2: ', sum([v.sum_self() for v in mem2.values()]))
 
