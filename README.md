@@ -1,1 +1,3 @@
-Solutions for Advent of Code 2020, my first year participating!
+Solutions for Advent of Code:
+2020 - Done in Python
+2021 - Done in Go
