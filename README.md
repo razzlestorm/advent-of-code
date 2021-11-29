@@ -1,3 +1,3 @@
-Solutions for Advent of Code:
-2020 - Done in Python
-2021 - Done in Go
+## Solutions for Advent of Code:
+* 2020 - Done in Python
+* 2021 - Done in Go
