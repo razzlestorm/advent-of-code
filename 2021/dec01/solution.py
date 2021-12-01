@@ -10,7 +10,7 @@ class WindowSolver:
     window_size: int = 1
     data: list[int] = field(default_factory=list)
    
-    def count_increments(self):
+    def count_increments(self) -> int:
         incs = 0
         ii = 0
         jj = self.window_size
