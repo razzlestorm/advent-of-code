@@ -18,7 +18,7 @@ class SubParser:
 
 
     def get_vectors(self) -> List[Vector]:
-        return [Vector(*line.split()) for line in self.data]
+        return [Vector(line.split()[0], int(line.split()[1])) for line in self.data]
 
     def follow_route(self) -> tuple:
         x, y = (0, 0)
