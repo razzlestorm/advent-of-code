@@ -10,21 +10,17 @@ class Vector(NamedTuple):
     speed: int
 
 class SubParser:
-    def __init__(self, data):
+    def __init__(self, data: List[list]):
         self.data = data
         self.vectors = self.get_vectors()
         self.position = self.follow_route()
         self.position2 = self.follow_route2()
 
 
-    def get_vectors(self):
-        vectors = []
-        for pair in self.data:
-            result = pair.split(" ")
-            vectors.append(Vector(result[0], int(result[1])))
-        return vectors
+    def get_vectors(self) -> List[Vector]:
+        return [Vector(*line.split()) for line in self.data]
 
-    def follow_route(self):
+    def follow_route(self) -> tuple:
         x, y = (0, 0)
         for vect in self.vectors:
             if vect.direction == "forward":
@@ -35,7 +31,7 @@ class SubParser:
                 y += vect.speed
         return x, y
 
-    def follow_route2(self):
+    def follow_route2(self) -> tuple:
         x, y = (0, 0)
         aim = 0
         for vect in self.vectors:
@@ -55,4 +51,5 @@ if __name__ == "__main__":
     sub = SubParser(data)
     # solution 1
     print(sub.position[0] * sub.position[1])
+    # solution 2
     print(sub.position2[0] * sub.position2[1])
