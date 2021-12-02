@@ -14,6 +14,7 @@ class SubParser:
         self.data = data
         self.vectors = self.get_vectors()
         self.position = self.follow_route()
+        self.position2 = self.follow_route2()
 
 
     def get_vectors(self):
@@ -34,6 +35,19 @@ class SubParser:
                 y += vect.speed
         return x, y
 
+    def follow_route2(self):
+        x, y = (0, 0)
+        aim = 0
+        for vect in self.vectors:
+            if vect.direction == "forward":
+                x += vect.speed
+                y += vect.speed * aim
+            if vect.direction == "up":
+                aim -= vect.speed
+            if vect.direction == "down":
+                aim += vect.speed
+        return x, y
+
 
 if __name__ == "__main__":
     DATA = (FILE_DIR / "input.txt").read_text().strip()
@@ -41,3 +55,4 @@ if __name__ == "__main__":
     sub = SubParser(data)
     # solution 1
     print(sub.position[0] * sub.position[1])
+    print(sub.position2[0] * sub.position2[1])
