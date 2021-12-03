@@ -27,7 +27,7 @@ def convert_gamma(nums: List[str]) -> int:
     gamma = "".join(gamma)
     return gamma
 
-def get_ratings(nums: List[str], common=True) -> int:
+def get_ratings(nums: List[str], common=True) -> str:
 
     remaining = copy.deepcopy(nums)
     ii = 0 
