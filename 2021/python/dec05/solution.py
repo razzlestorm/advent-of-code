@@ -71,9 +71,7 @@ if __name__ == "__main__":
     overlap_dict, overlaps = check_overlapping(straight_ranges)
     #sol 1 4655
     print(overlaps)
-    diag_lines = [v for v in vents if not v.is_straight_line()]
-    diag_ranges = [l.get_diagonal_range() for l in diag_lines]
-    all_ranges = straight_ranges + diag_ranges
+    all_ranges = [v.get_straight_range() if v.is_straight_line() else v.get_diagonal_range() for v in vents]
     overlap_dict2, overlaps2 = check_overlapping(all_ranges)
     #sol 2 20500
     print(overlaps2)
