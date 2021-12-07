@@ -4,57 +4,60 @@ from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
 from typing import List, NamedTuple
-from statistics import median, stdev
+from statistics import median, mean
 from math import floor
 
 FILE_DIR = Path(__file__).parent
 
 
 # some sort of math with the mode and the median?
+"""
+The median works for part 1 because of the optimality property: it is the value with the lowest absolute distance to the data.
+
+Unfortunately, this does not work for part 2, because the "distances" (measured in fuel consumption) are no longer linear: if you double the distance, you need more than double the fuel.
+
+In fact, the distances are the triangle numbers, which are defined by n × (n+1) / 2. Because of the n2 in there, we know that the arithmetic mean has the lowest total distance to the data.
+"""
 
 def find_fuel_cost(crabs: List[int], center: int) -> int:
-    total = 0
+    totals = []
     for c in crabs:
-        fuel_cost = 1
-        for ii in range(min(c, int(center)), max(c, int(center))):
-            total += fuel_cost
-            fuel_cost += 1
-    return total
+        # gaussian way added to original solution
+        fuel_cost = abs(c - center)
+        fuel_cost = fuel_cost*(fuel_cost+1)/2
+        totals.append(fuel_cost)
+    return totals
 
 def brute_force(data):
-    min_cost = 100000000
-    for ii in range(min(data), max(data)+1):
-        print(ii)
-        cost = find_fuel_cost(data, ii)
-        if cost < min_cost:
-            min_cost = cost
-    return min_cost
+    fuel_costs = [sum(find_fuel_cost(data, ii)) for ii in range(min(data), max(data)+1)]
+    return min(fuel_costs)
 
+def gauss_sum(n: int) -> int:
+    n = n*(n+1)/2
+    return n
 
 if __name__ == "__main__":
     test_data = [16,1,2,0,4,2,7,1,2,14]
-    mode = Counter(test_data).most_common(1)[0][0]
-    sol = sum([abs(ii-median(test_data)) for ii in test_data])
-    sol2 = brute_force(test_data)
-    print(sol)
-    print(sol2)
-    print(mode)
-    print(min(test_data))
-    print(median(test_data))
-    print(max(test_data))
-    print(stdev(test_data))
+    center = int(median(test_data))
+    test_sol = sum([abs(x - center) for x in test_data])
+    mean_num = floor(mean(test_data))
+    test_sol2 = sum([gauss_sum(abs(x - mean_num)) for x in test_data])
+    print(test_sol)
+    # note that the gauss_sum method doesn't work for the test data
+    print(test_sol2)
+
     DATA = (FILE_DIR / "input.txt").read_text().strip()
     data = [int(x) for x in DATA.split(',')]
-    print(len(data))
-    mode = Counter(data).most_common(5)
-    print(mode)
-    print(min(data))
-    m = median(data)
-    print(max(data))
-    s = stdev(data)
-    print(sum([abs(ii-m) for ii in data]))
-    # test working
-    print(sum([abs(ii-floor(s)) for ii in data]))
-    # not 92676748
-    print(brute_force(data))
 
+
+
+    #optimal sol1
+    pos = int(median(data))
+    print(sum([abs(x - pos) for x in data]))
+    #optimal sol2
+    pos = floor(mean(data))       
+    print(sum([gauss_sum(abs(x - pos)) for x in data]))
+
+
+    #improved original solution 2
+    print(brute_force(data))
