@@ -1,11 +1,7 @@
-from collections import Counter, defaultdict
-import copy
-from dataclasses import dataclass, field
-from functools import lru_cache
+from collections import Counter
+from dataclasses import dataclass
 from pathlib import Path
-from typing import List, NamedTuple
-from statistics import median, mean
-from math import floor
+from typing import List
 
 FILE_DIR = Path(__file__).parent
 
