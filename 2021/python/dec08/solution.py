@@ -55,10 +55,16 @@ def is_unique_digit(s: str) -> bool:
 
 def convert_output(mapping: dict, s: List[str]) -> int:
     """
-    uses the mapping to convert the output string to numbers and returns their sum
+    uses the mapping to convert the output series of strings to a number
     """
-    pass
-# for part 2, we can map letters to positions based on the logic between 1, 4, 7, 8
+    result = ""
+    for output in s:
+        d = Counter(output)
+        for k, v in mapping.items():
+            if d == v:
+                result += str(k)
+    result = int(result)
+    return result
 
 def map_positions(row: Display) -> dict:
     NUMBER_MAP = {0: None, 1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None, 9: None}
@@ -129,9 +135,11 @@ if __name__ == "__main__":
 
     data2 = create_row_lists([x for x in DATA.split("\n")])
     mappings = []
-    for ii, d in enumerate(data2):
+    for d in data2:
         mappings.append(map_positions(d))
-    print(mappings)
+    #sol2
+    total = sum([convert_output(mappings[ii], data2[ii].output) for ii in range(len(data2))])
+    print(total)
 
 
 
