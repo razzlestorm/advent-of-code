@@ -54,6 +54,10 @@ def convert_output(mapping: dict, s: List[str]) -> int:
     return result
 
 def map_positions(row: Display) -> dict[Counter]:
+    """
+    Mainly uses Counter combination logic to figure out which string series map to
+    which numbers. Returns a map of the completed Counter.
+    """
     NUMBER_MAP = {}
     combined = row.segment + row.output
     for s in combined:
