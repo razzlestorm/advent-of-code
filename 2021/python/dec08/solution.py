@@ -9,7 +9,6 @@ from math import floor
 
 FILE_DIR = Path(__file__).parent
 
-
 @dataclass()
 class Display:
     segment: list
@@ -28,14 +27,6 @@ DIGITS = {
     8: 7,
     9: 6
 }
-
-def get_outputs(data: List[str]) -> List[str]:
-    results = []
-    for row in data:
-        o = row.split("|")[1]
-        out = [x.strip() for x in o.split()]
-        results.append(out)
-    return results
 
 def create_row_lists(data: List[str]) -> Display:
     results = []
@@ -66,8 +57,8 @@ def convert_output(mapping: dict, s: List[str]) -> int:
     result = int(result)
     return result
 
-def map_positions(row: Display) -> dict:
-    NUMBER_MAP = {0: None, 1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None, 9: None}
+def map_positions(row: Display) -> dict[Counter]:
+    NUMBER_MAP = {}
     combined = row.segment + row.output
     for s in combined:
         # find the 1, 4, 7, 8 to get basic mapping of segments
@@ -120,25 +111,26 @@ if __name__ == "__main__":
         "gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce",
     ]
 
-    test_outputs = get_outputs(test_data)
+    test_outputs = create_row_lists(test_data)
     counts = 0
-    for l in test_outputs:
-        counts += sum([is_unique_digit(s) for s in l])
-    print(counts)
-    DATA = (FILE_DIR / "input.txt").read_text().strip()
-    data = get_outputs([x for x in DATA.split("\n")])
-    counts = 0
-    for l in data:
-        counts += sum([is_unique_digit(s) for s in l])
-    #sol1
+    for d in test_outputs:
+        counts += sum([is_unique_digit(s) for s in d.output])
     print(counts)
 
-    data2 = create_row_lists([x for x in DATA.split("\n")])
+    DATA = (FILE_DIR / "input.txt").read_text().strip()
+    data = create_row_lists([x for x in DATA.split("\n")])
+    #sol1 - 554
+    counts = 0
+    for d in data:
+        counts += sum([is_unique_digit(s) for s in d.output])
+    print(counts)
+
+    #sol2 - 990964
     mappings = []
-    for d in data2:
+    for d in data:
         mappings.append(map_positions(d))
-    #sol2
-    total = sum([convert_output(mappings[ii], data2[ii].output) for ii in range(len(data2))])
+    # pass zip of dicts and Display objects into converter
+    total = sum([convert_output(x[0], x[1].output) for x in zip(mappings, data)])
     print(total)
 
 
