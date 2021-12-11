@@ -4,15 +4,17 @@ from typing import List
 
 FILE_DIR = Path(__file__).parent
 
+
 @dataclass()
 class Octopus:
     energy: int
     position: tuple
     flashed: bool = False
     neighbors: list = field(default_factory=list)
-    
+
     def __repr__(self):
         return f"{self.energy}"
+
 
 def create_map(data: List[str]):
     seamap = []
@@ -24,7 +26,6 @@ def create_map(data: List[str]):
         seamap.append(row)
     for y in range(len(seamap)):
         for x in range(len(seamap[0])):
-            neighbors = []
             for yy in [-1, 0, 1]:
                 for xx in [-1, 0, 1]:
                     if (yy == 0 and xx == 0):
@@ -36,11 +37,12 @@ def create_map(data: List[str]):
                             seamap[y][x].neighbors.append(seamap[y + yy][x + xx])
     return seamap
 
+
 def check_energy(o: Octopus) -> bool:
     if o.energy > 9 and not o.flashed:
-        # FLASH
         return True
     return False
+
 
 def run_step(data):
     for row in range(len(data)):
@@ -86,27 +88,26 @@ if __name__ == "__main__":
 
     test_outputs = create_map(test_data)
     counter = 0
-    # sol 1
+    # test_solution - 204
     for ii in range(1, 11):
         test_outputs = run_step(test_outputs)
         test_outputs, counter = run_flashes(test_outputs, counter)
     print("Test: ", counter)
 
-
     DATA = (FILE_DIR / "input.txt").read_text().strip()
     data = [x for x in DATA.split("\n")]
     seamap1 = create_map(data)
     counter = 0
-    # sol 1
+    # sol 1 - 1647
     for _ in range(1, 101):
         seamap1 = run_step(seamap1)
         seamap1, counter = run_flashes(seamap1, counter)
-    
+
     print("Sol1:", counter)
 
     seamap2 = create_map(data)
     counter = 0
-    # sol 2
+    # sol 2 - 348
     for ii in range(1, 10000):
         seamap2 = run_step(seamap2)
         seamap2, counter = run_flashes(seamap2, counter)
