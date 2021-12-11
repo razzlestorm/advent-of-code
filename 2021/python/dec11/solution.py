@@ -71,16 +71,7 @@ def run_flashes(data: List[Octopus], counter: int):
     return data, counter
 
 
-def solve_one(data: List[list], steps: int) -> int:
-    seamap = create_map(data)
-    counter = 0
-    for _ in range(steps):
-        seamap = run_step(seamap)
-        seamap, counter = run_flashes(seamap, counter)
-    return counter
-
-
-def solve_two(data: List[list], steps: int) -> int:
+def cccombo_solver(data: List[list], steps: int) -> int:
     seamap = create_map(data)
     counter = 0
     for ii in range(steps):
@@ -88,7 +79,7 @@ def solve_two(data: List[list], steps: int) -> int:
         seamap, counter = run_flashes(seamap, counter)
         if all([o.flashed for row in seamap for o in row]):
             return ii
-    return False
+    return counter
 
 
 if __name__ == "__main__":
@@ -106,10 +97,10 @@ if __name__ == "__main__":
         "5283751526"
     ]
 
-    print("Test1: ", solve_one(test_data, 100))  # 1656
-    print("Test2: ", solve_two(test_data, 1000))  # 194
+    print("Test1: ", cccombo_solver(test_data, 100))  # 1656
+    print("Test2: ", cccombo_solver(test_data, 1000))  # 194
 
     DATA = (FILE_DIR / "input.txt").read_text().strip()
     data = [x for x in DATA.split("\n")]
-    print("Sol1:", solve_one(data, 100))  # 1647
-    print("Sol2:", solve_two(data, 1000))  # 348
+    print("Sol1:", cccombo_solver(data, 100))  # 1647
+    print("Sol2:", cccombo_solver(data, 1000))  # 348
