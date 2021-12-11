@@ -71,6 +71,26 @@ def run_flashes(data: List[Octopus], counter: int):
     return data, counter
 
 
+def solve_one(data: List[list], steps: int) -> int:
+    seamap = create_map(data)
+    counter = 0
+    for _ in range(steps):
+        seamap = run_step(seamap)
+        seamap, counter = run_flashes(seamap, counter)
+    return counter
+
+
+def solve_two(data: List[list], steps: int) -> int:
+    seamap = create_map(data)
+    counter = 0
+    for ii in range(steps):
+        seamap = run_step(seamap)
+        seamap, counter = run_flashes(seamap, counter)
+        if all([o.flashed for row in seamap for o in row]):
+            return ii
+    return False
+
+
 if __name__ == "__main__":
 
     test_data = [
@@ -86,31 +106,10 @@ if __name__ == "__main__":
         "5283751526"
     ]
 
-    test_outputs = create_map(test_data)
-    counter = 0
-    # test_solution - 204
-    for ii in range(1, 11):
-        test_outputs = run_step(test_outputs)
-        test_outputs, counter = run_flashes(test_outputs, counter)
-    print("Test: ", counter)
+    print("Test1: ", solve_one(test_data, 100))  # 1656
+    print("Test2: ", solve_two(test_data, 1000))  # 194
 
     DATA = (FILE_DIR / "input.txt").read_text().strip()
     data = [x for x in DATA.split("\n")]
-    seamap1 = create_map(data)
-    counter = 0
-    # sol 1 - 1647
-    for _ in range(1, 101):
-        seamap1 = run_step(seamap1)
-        seamap1, counter = run_flashes(seamap1, counter)
-
-    print("Sol1:", counter)
-
-    seamap2 = create_map(data)
-    counter = 0
-    # sol 2 - 348
-    for ii in range(1, 10000):
-        seamap2 = run_step(seamap2)
-        seamap2, counter = run_flashes(seamap2, counter)
-        if all([o.flashed for row in seamap2 for o in row]):
-            print("Sol2:", ii)
-            break
+    print("Sol1:", solve_one(data, 100))  # 1647
+    print("Sol2:", solve_two(data, 1000))  # 348
