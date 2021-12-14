@@ -27,9 +27,9 @@ def convert_gamma(nums: List[str]) -> int:
     gamma = "".join(gamma)
     return gamma
 
-def get_ratings(nums: List[str], common=True) -> str:
+def get_board(matrices: List[num]) -> str:
 
-    remaining = copy.deepcopy(nums)
+    remaining = copy.deepcopy(matrices)
     ii = 0 
     while len(remaining) > 1:
         most = 0
@@ -56,16 +56,5 @@ def get_ratings(nums: List[str], common=True) -> str:
 
 if __name__ == "__main__":
     DATA = (FILE_DIR / "input.txt").read_text().strip()
-    data = [x for x in DATA.split('\n')]
-    g = get_gamma(data)
-    #sol1
-    gamma = convert_gamma(g)
-    gamma = int(gamma, 2)
-    epsilon = gamma ^ 0b111111111111
-    print(gamma * epsilon)
-    #sol2
-    e = str(bin(epsilon))
-    o = convert_gamma(g)
-    oxy = get_ratings(data)
-    co2 = get_ratings(data, common=False)
-    print(int(oxy, 2) * int(co2, 2))
+    data = [x for x in DATA.split('\n\n')]
+    breakpoint()

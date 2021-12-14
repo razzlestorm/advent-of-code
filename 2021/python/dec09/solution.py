@@ -2,6 +2,7 @@ from collections import deque, Counter
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List
+import argparse
 
 FILE_DIR = Path(__file__).parent
 
@@ -59,6 +60,19 @@ def bfs(matrix: List[str], coords: tuple[int]):
     return visited
 
 if __name__ == "__main__":
+    
+    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('integers', metavar='N', type=int, nargs='+',
+                        help='an integer for the accumulator')
+    parser.add_argument('--sum', dest='accumulate', action='store_const',
+                        const=sum, default=max,
+                        help='sum the integers (default: find the max)')
+
+    args = parser.parse_args()
+
+    breakpoint()
+    print(args.accumulate(args.integers))
+
     test_data = [
         "2199943210",
         "3987894921",

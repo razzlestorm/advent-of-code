@@ -26,12 +26,14 @@ def create_map(data: List[str]):
         seamap.append(row)
     for y in range(len(seamap)):
         for x in range(len(seamap[0])):
+            # checking each neighbor
             for yy in [-1, 0, 1]:
                 for xx in [-1, 0, 1]:
                     if (yy == 0 and xx == 0):
                         continue
                     y_cell = y+yy
                     x_cell = x+xx
+                    # checking that they aren't out of bounds
                     if (y_cell >= 0 and x_cell >= 0) and (y_cell < len(seamap) and x_cell < len(seamap[y])):
                         if seamap[y + yy][x + xx] not in seamap[y][x].neighbors:
                             seamap[y][x].neighbors.append(seamap[y + yy][x + xx])

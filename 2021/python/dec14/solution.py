@@ -27,12 +27,53 @@ def run_step(template: str, rules: dict) -> str:
 def solve_one(data: List[str]) -> int:
     template = data[0]
     rules = define_rules(data[1:])
+    pairs = defaultdict(int)
+    # neat way to iterate over each pair in string
+    for i, j in zip(template, template[1:]):
+        pairs[i+j] += 1
+
+    chars = defaultdict(int)
+    for c in template:
+        chars[c] += 1
+    
     for _ in range(10):
-        template = run_step(template, rules)
-    mc = Counter(template).most_common()
-    return mc[0][1] - mc[-1][1]
+        for (a, b), c in pairs.copy().items():
+            x = rules[a+b]
+            # remove count of original pair
+            pairs[a+b] -= c
+            # increate count of replacement pairs
+            pairs[a+x] += c
+            pairs[x+b] += c
+            # increase count of new character
+            chars[x] += c
+
+    return max(chars.values()) - min(chars.values())
 
 
+def solve_two(data: List[str]) -> int:
+    template = data[0]
+    rules = define_rules(data[1:])
+    pairs = defaultdict(int)
+    # neat way to iterate over each pair in string
+    for i, j in zip(template, template[1:]):
+        pairs[i+j] += 1
+
+    chars = defaultdict(int)
+    for c in template:
+        chars[c] += 1
+    
+    for _ in range(40):
+        for (a, b), c in pairs.copy().items():
+            x = rules[a+b]
+            # remove count of original pair
+            pairs[a+b] -= c
+            # increate count of replacement pairs
+            pairs[a+x] += c
+            pairs[x+b] += c
+            # increase count of new character
+            chars[x] += c
+
+    return max(chars.values()) - min(chars.values())
 
 if __name__ == "__main__":
 
@@ -57,10 +98,10 @@ if __name__ == "__main__":
     ]
 
     print("Test1: ", solve_one(test_data))  # 1588
-    # print("Test2: ", solve_two(test_data))  # 2188189693529
+    print("Test2: ", solve_two(test_data))  # 2188189693529
 
     DATA = (FILE_DIR / "input.txt").read_text().strip()
     data = [x for x in DATA.split("\n") if x]
 
     print("Sol1:", solve_one(data))  # 3048
-    #print("Sol2:", cccombo_solver(data, 1000))  # 348
+    print("Sol2:", solve_two(data))  # 3288891573057

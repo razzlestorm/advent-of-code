@@ -47,8 +47,6 @@ def get_unmarked_nums(checklist, board) -> List:
             if num not in checklist: 
                 nums.append(num)
     return nums
-    
-
 
 if __name__ == "__main__":
     DATA = (FILE_DIR / "input.txt").read_text().strip()
