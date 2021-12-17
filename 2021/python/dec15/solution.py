@@ -1,48 +1,33 @@
 from collections import defaultdict, Counter
+import heapq
 from pathlib import Path
 from typing import List
 
 FILE_DIR = Path(__file__).parent
 
-class GNode:
-    def __init__(self, val, edges=None):
-        self.val = val
-        self.edges = edges
-        if not self.edges:
-            self.edges = []
-    def __repr__(self):
-        return str(self.val)
+# Credit to Joel Grus for sol 2 https://www.youtube.com/watch?v=tCrpuMS60TE&list=PLeDtc0GP5IClHtOISluA2UIXY7VK_Yewf&index=14
+def reset_val(x: int) -> int:
+    while x > 9:
+        x -= 9
+    return x
 
-def create_graph(l: List[str]) -> List[List[GNode]]:
-    matrix = []
-    diagonals = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
-    for line in l:
-        row = []
-        for char in line:
-            row.append(GNode(int(char)))
-        
-        matrix.append(row)
-    for j in range(len(matrix)):
-        for k in range(len(matrix[0])):
-            for dj in [-1, 0, 1]:
-                for dk in [-1, 0, 1]:
-                    if (dj == 0 and dk == 0) or (dj, dk) in diagonals:
-                        continue
-                    y_cell = j+dj
-                    x_cell = k+dk
-                    # checking that they aren't out of bounds
-                    if (y_cell >= 0 and x_cell >= 0) and (y_cell < len(matrix) and x_cell < len(matrix[0])):
-                        if matrix[y_cell][x_cell] not in matrix[j][k].edges:
-                            matrix[j][k].edges.append(matrix[y_cell][x_cell])
-    return matrix
+def expand_map(matrix):
+    nr = len(matrix)
+    nc = len(matrix[0])
 
-def upgrade_map(matrix):
-    # a few steps: 
-    # extend rows to be the original * 5 + increasing vals each time
-    # append rows to start at prev_row+1 * 5
-    # run over everything and do the rule of 10 -> 1
+    new_matrix = [[0 for _ in range(nc * 5)] for _ in range(nr * 5)]
 
+    for i in range(5):
+        for j in range(5):
+            for r in range(nr):
+                for c in range(nc):
+                    new_value = reset_val(int(matrix[r][c]) + i + j)
+                    new_matrix[r + i * nr][c + j * nc] = new_value
+    
+    return new_matrix
 
+"""
+# Leaving commented so I can compare the two easily
 def dijkstra(matrix, start):
     unvisited_nodes = [node for line in matrix for node in line] 
     shortest_path = {}
@@ -67,27 +52,40 @@ def dijkstra(matrix, start):
         unvisited_nodes.remove(cur_min)
 
     return previous_nodes, shortest_path
+"""
+# Upgraded pathfinding, credit to: https://github.com/Peter200lx/advent-of-code/blob/master/2021/day15.py
+def pathfinder(matrix):
+    heap = []
+    heapq.heappush(heap, (0, (0, 0)))
+    coord_cost = {}
+    finish = (len(matrix[-1]) - 1, len(matrix) - 1)
+    get_func = lambda m, x, y: m[y][x]
 
+    while heap:
+        risk_so_far, cur_coord = heapq.heappop(heap)
+        if coord_cost.get(cur_coord, 99999999) <= risk_so_far:
+            continue
+        if cur_coord == finish:
+            return risk_so_far
+        coord_cost[cur_coord] = risk_so_far
+        for dx, dy in ((-1, 0), (0, -1), (0, 1), (1, 0)):
+            new_x, new_y = cur_coord[0] + dx, cur_coord[1] + dy
+            if 0 <= new_x <= finish[0] and 0 <= new_y <= finish[1]:
+                other_risk = risk_so_far + get_func(matrix, new_x, new_y)
+                if coord_cost.get((new_x, new_y), 99999999) <= other_risk:
+                    continue
+                heapq.heappush(heap, (other_risk, (new_x, new_y)))
 
-def get_result(previous_nodes, shortest_path, start_node, target_node):
-    path = []
-    node = target_node
-    
-    while node != start_node:
-        path.append(node)
-        node = previous_nodes[node]
- 
-    # Add the start node manually
-    path.append(start_node)
-    return shortest_path[target_node]
 
 def solve_one(data: List[str]) -> int:
-    prev_nodes, shortest_path = dijkstra(data, data[0][0])
-    return get_result(prev_nodes, shortest_path, data[0][0], data[-1][-1])
+    return pathfinder(data)
 
 
+# Do better than dijkstra, just do a bfs or something
 def solve_two(data: List[str]) -> int:
-    pass
+    data = expand_map(data)
+    return pathfinder(data)
+
 
 
 if __name__ == "__main__":
@@ -105,13 +103,12 @@ if __name__ == "__main__":
         "2311944581",
     ]
 
-    test_map = create_graph(test_data)
-    print("Test1: ", solve_one(test_map)) 
-    print("Test2: ", solve_two(test_map))  
+    print("Test1: ", solve_one([[int(n) for n in line] for line in test_data])) 
+    print("Test2: ", solve_two([[int(n) for n in line] for line in test_data]))  
 
     DATA = (FILE_DIR / "input.txt").read_text().strip()
     data = [x for x in DATA.split("\n")]
-    data_map = create_graph(data)
+    data_map = [[int(n) for n in line] for line in data]
 
-    print("Sol1:", solve_one(data_map)) 
+    print("Sol1:", solve_one(data_map))
     print("Sol2:", solve_two(data_map)) 
