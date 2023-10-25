@@ -9,7 +9,7 @@ void test_func(){
 	total = score_line('A', 'Y');
 	total += score_line('B', 'X');
 	total += score_line('C', 'Z');
-	printf("%d should equal 15", total);
+	printf("%d should equal 15\n", total);
 }
 
 int score_line(char opp, char player){
@@ -17,18 +17,60 @@ int score_line(char opp, char player){
 	switch (player) {
 		case 'X':
 			total += 1;
+			switch (opp){
+				case 'A':
+				total += 3;
+				break;
+			}
+			switch (opp){
+				case 'B':
+				total += 0;
+				break;
+			}
+			switch (opp){
+				case 'C':
+				total += 6;
+				break;
+			}
 			break;
 		case 'Y':
 			total += 2;
+			switch (opp){
+				case 'A':
+				total += 6;
+				break;
+			}
+			switch (opp){
+				case 'B':
+				total += 3;
+				break;
+			}
+			switch (opp){
+				case 'C':
+				total += 0;
+				break;
+			}
 			break;
 		case 'Z':
 			total += 3;
+			switch (opp){
+				case 'A':
+				total += 0;
+				break;
+			}
+			switch (opp){
+				case 'B':
+				total += 6;
+				break;
+			}
+			switch (opp){
+				case 'C':
+				total += 3;
+				break;
+			}
 			break;
 	}
-
-
 	return total;
-
 }
 
 int main(){
@@ -43,8 +85,11 @@ int main(){
 	int total = 0;
 	while (fgets(line, 8, ptr)){
 		total += score_line(line[0], line[2]);
-		
 	}
 
 	fclose(ptr);
+	test_func();
+
+	printf("Total according to strategy guide: %d", total);
+	return 0;
 }
