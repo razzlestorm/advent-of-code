@@ -163,3 +163,60 @@ int main(){
 	printf("%d", total);
 	return 0;
 }
+
+
+#include <stdio.h>
+
+#define AOCYEAR 2022
+#define AOCDAY  2
+
+enum round {
+	WIN = 6,
+	TIE = 3,
+	LOSS = 0,
+};
+
+enum round outcome(int const a, int const b);
+int choose_move(int const a, enum round const outcome);
+
+// Move this here because it will be used by multiple functions
+static const enum round outcomes[3][3] = {
+	{TIE, LOSS, WIN},
+	{WIN, TIE, LOSS},
+	{LOSS, WIN, TIE},
+};
+
+int main(void)
+{
+	char a, b;
+	int score1 = 0;
+	int score2 = 0;
+
+	while (2 == scanf(" %c %c", &a, &b)) {
+		a = a - 'A';
+		b = b - 'X';
+
+		score1 += outcome(b, a) + (b + 1);
+		score2 += (b * 3) + choose_move(a, b * 3);
+	}
+
+	printf("%4d-%02d/%d: %d\n", AOCYEAR, AOCDAY, 1, score1);
+	printf("%4d-%02d/%d: %d\n", AOCYEAR, AOCDAY, 2, score2);
+}
+
+enum round outcome(int const a, int const b)
+{
+	return outcomes[a][b];
+}
+
+int choose_move(int const a, enum round const outcome)
+{
+	int i;
+	for (i = 0; i < 3; ++i) {
+		// 6 - outcome "inverts" the outcome
+		if (outcomes[a][i] == (6 - outcome)) {
+			break;
+		}
+	}
+	return i + 1;
+}
