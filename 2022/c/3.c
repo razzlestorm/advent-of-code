@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-char find_shared_char(char* s);
+int get_shared_char_priority(char* s);
 int get_priority(char c);
 
 void test_func(){
@@ -16,25 +16,28 @@ void test_func(){
 	};
 	int total = 0;
 	for(int i = 0; i < 6; i++){
-		char c = find_shared_char(s1[i]);
-		int plus = get_priority(c);
-		total += plus;
-		printf("total for %d is %d\n", i, plus);
+		int p = get_shared_char_priority(s1[i]);
+		total += p;
+		printf("total for %d is %d\n", i, p);
 	}
 	printf("test total is %d\n", total);
 	
 }
 
-char find_shared_char(char* s){
+int get_shared_char_priority(char* s){
 	int len = strlen(s);
-	int left, right;
-	for(left = 0; left < len / 2; left++){
-		for (right = len / 2; right < len; right++){
-			if (s[left] == s[right]){
-				return s[left];
-			}
-
+	int i;
+	int seen[64] = {0};
+	for(i = 0; i < len; i++){
+		int p = get_priority(s[i]);
+		if (i < len/2){
+			seen[p] = 1; 
 		}
+		else {
+			if (seen[p]){
+				return p;
+			}
+		}	
 	}
 	printf("NO CHARACTER FOUND");
 	return '\0';
@@ -66,8 +69,8 @@ int main(){
 	int total = 0;
 	char c;
 	while (fgets(line, 64, ptr)){
-		c = find_shared_char(line);
-		total += get_priority(c);
+		int p = get_shared_char_priority(line);
+		total += p;
 	}
 
 	fclose(ptr);
