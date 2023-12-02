@@ -17,23 +17,21 @@ void test_func(char* s[], int len) {
 }
 
 int sum_numbers_in_string(char* s){
-	int left = 0;
-	int right = strlen(s);
-	char strnum[2];
-	int filled = 0;
-	while (filled < 2){
-		if (isdigit(s[left])){
-			strnum[0] = s[left];
-			filled++;
+	int len = strlen(s);
+	int first = 999;
+	int last = 0;
+	for (int i; i < len; i++){
+		printf("%c", s[i]);
+		if isdigit(s[i]){
+			if (first == 999){
+				first = ((int)(s[i]) - '0') * 10;
+			}
+			last = (int)(s[i] - '0');
 		}
-		if (isdigit(s[right])){
-			strnum[1] = s[right];
-			filled++;
-		}
-		left++;
-		right--;
+		printf("first is %d and last is %d\n", first, last);
 	}
-	return atoi(strnum);
+	int total = first + last;
+	return total;
 }
 
 int main(){
@@ -57,13 +55,14 @@ int main(){
 	ptr = fopen("1.txt", "r");
 	if (ptr == NULL){
 		printf("file can't be opened\n");
+		return 1;
 	}
 
 	int total = 0;
 	while (fgets(stringBuf, 128, ptr)){
 		int sum = sum_numbers_in_string(stringBuf);
 		total += sum;
-		printf("answer for %s is %d\n", stringBuf, sum);
+	//	printf("answer for %s is %d\n", stringBuf, sum);
 	}
 
 	fclose(ptr);
