@@ -25,6 +25,28 @@ pub fn part1(input: &str) -> u32 {
         .sum()
 }
 
+pub fn part2(input: &str) -> u32 {
+    // Create two vecs for numbers on either side
+    let (left, right): (Vec<u32>, Vec<u32>) = input.lines()
+        .map(|line| {
+            let n: Vec<u32> = line 
+                .split_whitespace()
+                .map(|n| n.parse().ok().unwrap())
+                .collect();
+            (n[0], n[1])
+        })
+        .unzip();
+
+    left.iter()
+        .map(|n| {
+            let multi = right.iter()
+            .filter(|&m| *m == *n )
+            .count() as u32;
+            n * multi
+        })
+        .sum()
+}
+
 pub fn load_input(path: &str) -> Result<String, Box<dyn Error>> {
     let message: String = fs::read_to_string(path)?;
     Ok(message)
