@@ -16,6 +16,9 @@ fn main() {
     let answer1 = part1(&lines);
     println!("answer 1 : {:?}", answer1);
 
+    let test2 = part2(&test);
+    println!("test 2 : {:?}", test2);
+
     let answer2 = part2(&lines);
     println!("answer 2 : {:?}", answer2);
 }

@@ -2,8 +2,25 @@ use std::fs;
 use std::error::Error;
 
 
+fn check_sequence(v: &Vec<i32>) -> bool {
+    let increasing = v[0] < v[1];
+ 
+    if increasing {
+        if v.windows(2).all(|w| w[0] < w[1]) {
+            return v.windows(2).all(|w| (w[1] - w[0]).abs() <= 3);
+        }
+        false
+    }
+
+    else {
+        if v.windows(2).all(|w| w[0] > w[1]) {
+            return v.windows(2).all(|w| (w[1] - w[0]).abs() <= 3);
+        }
+        false
+    }
+}
+
 pub fn part1(input: &str) -> u32 {
-    // Create two vecs for numbers on either side
     let reports: Vec<Vec<i32>> = input.lines()
         .map(|line| 
             line.split_whitespace()
@@ -11,42 +28,11 @@ pub fn part1(input: &str) -> u32 {
             .collect())
         .collect();
 
-    // iter over report, make sure num and next_num are within 3, make sure we are either
-    // continuosly increasing or decreasing
-    // Maybe have some helper functions and then use a filter
-    // So filter out ones that aren't strictly increasing or decreasing (return true/false)
-    // then filter out ones that have abs diffs of >3 between numbers (also return true false)
     let mut safe = 0;
-    'outer: for report in reports.iter() {
+    for report in reports.iter() {
 
-        let (mut m, mut n) = (0, 1);
-        if report[m] == report [n] {
-            continue; 
-        }
-        let increasing = report[m] < report[n];
-        match increasing {
-
-            true => {
-
-                while n < report.len() {
-                    if ((report[n] - report[m]).abs() > 3) || ((report[n] - report[m]).abs() < 1 || report[n] < report[m] ){
-                        continue 'outer;
-                    }
-                    m += 1;
-                    n += 1;
-                }
-                safe += 1;
-            },
-            false => {
-                while n < report.len() {
-                    if ((report[m] - report[n]).abs() > 3) || ((report[m] - report[n]).abs() < 1) || report[n] > report[m] {
-                        continue 'outer;
-                    }
-                    m += 1;
-                    n += 1;
-                }
-                safe += 1;
-            },
+        if check_sequence(&report){
+            safe += 1
         }
     }
     safe
@@ -54,7 +40,27 @@ pub fn part1(input: &str) -> u32 {
 
 
 pub fn part2(input: &str) -> u32 {
-    1
+    
+    let reports: Vec<Vec<i32>> = input.lines()
+        .map(|line| 
+            line.split_whitespace()
+            .filter_map(|n| n.parse().ok())
+            .collect())
+        .collect();
+
+    let mut safe = 0;
+    'reportloop: for report in reports.iter() {
+        for i in 0..report.len() {
+            let mut new_report: Vec<i32> = report.clone();
+            new_report.remove(i);
+            if check_sequence(&new_report){
+                safe += 1;
+                continue 'reportloop;
+            }
+
+        }
+    }
+    safe
 }
 
 pub fn load_input(path: &str) -> Result<String, Box<dyn Error>> {
