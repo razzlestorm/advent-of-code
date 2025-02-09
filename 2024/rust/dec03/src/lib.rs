@@ -3,6 +3,8 @@ use std::error::Error;
 
 
 pub fn part1(input: &str) -> u32 {
+    // create a function to scan string, look fro only mul(\d[1-3],\d[1-3]) I guess, then
+    // multiply and add those all up?
     1
 }
 
